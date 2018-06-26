@@ -28,6 +28,22 @@ trait Settings{
 
 	public function set_setting( $key, $value ) {
 
+		if( ! is_a($this, "\WP_Post" ) ){
+			return $this->set_option( $key );
+		}
+
+		return update_post_meta( $this->ID, \LLMS\PREFIX . 'setting-' . $key , true );
+
+	}
+
+	public function delete_setting( $key ){
+
+		if( ! is_a($this, "\WP_Post" ) ){
+			return $this->delete_option( $key );
+		}
+
+		return delete_post_meta( $this->ID, \LLMS\PREFIX . 'setting-' . $key , true );
+		
 	}
 
 	public function get_inherited_setting( $key ){

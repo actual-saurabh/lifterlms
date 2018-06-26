@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) || exit;
  * @since    1.0.0
  * @version  3.18.2
  */
-class LLMS_Integrations {
+class LLMS_Module {
 
 	protected static $_instance = null;
 

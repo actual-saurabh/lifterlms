@@ -34,6 +34,10 @@ require_once 'vendor/autoload.php';
  */
 final class LifterLMS {
 
+	use LLMS\Core\Options;
+
+	private $id = 'global';
+
 	public $version = '3.19.3';
 
 	protected static $_instance = null;

@@ -491,6 +491,21 @@ class LLMS_Access_Plan extends LLMS_Post_Model {
 		return apply_filters( 'llms_plan_is_available_to_user', $access, $user_id, $this );
 
 	}
+	
+	public function is_trial_available_to_user( $user_id = null ) {
+		
+		// bail if the plan doesn't have a trial at all
+		if( !$this->has_trial() ){
+			return;
+		}
+		
+		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+		
+		$trial_access = true;
+		
+		// check if there are existing orders (trial or otherwise) for this user
+		
+	}
 
 	/**
 	 * Determine if the plan is marked as "featured"

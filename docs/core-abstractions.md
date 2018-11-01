@@ -16,7 +16,7 @@ An experience is a record of a user's participation in or performance of an acti
 
 Experiences are used for progress tracking and for reporting. An experience looks like this
 
-```json
+```js
 
 {
   'activity_id'   : '8d9ff4b8-3897-4469-8038-2d2d5e92f866',

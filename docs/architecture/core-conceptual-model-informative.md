@@ -5,14 +5,14 @@
 * 2. [Interaction Workflow](#InteractionWorkflow)
 * 3. [Reporting Workflow](#ReportingWorkflow)
 * 4. [Appendices](#Appendices)
-	* 4.1. [Learner Workflow](#LearnerWorkflow)
-		* 4.1.1. [Pre-Learning](#Pre-Learning)
-		* 4.1.2. [Learning](#Learning)
-		* 4.1.3. [Reporting](#Reporting)
-	* 4.2. [Instructor Workflow](#InstructorWorkflow)
-		* 4.2.1. [Pre-Instruction](#Pre-Instruction)
-		* 4.2.2. [Instruction](#Instruction)
-		* 4.2.3. [Reporting](#Reporting-1)
+    * 4.1. [Learner Workflow](#LearnerWorkflow)
+        * 4.1.1. [Pre-Learning](#Pre-Learning)
+        * 4.1.2. [Learning](#Learning)
+        * 4.1.3. [Reporting](#Reporting)
+    * 4.2. [Instructor Workflow](#InstructorWorkflow)
+        * 4.2.1. [Pre-Instruction](#Pre-Instruction)
+        * 4.2.2. [Instruction](#Instruction)
+        * 4.2.3. [Reporting](#Reporting-1)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -116,5 +116,3 @@ Includes Learning, Learning Management and Instruction
 1. **LRS** requests authentication from **LMS**
 1. **LRS** requests **Capabilities** from **LMS**
 1. **LRS** displays **Report**
-
-

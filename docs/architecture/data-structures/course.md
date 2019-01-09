@@ -183,7 +183,7 @@ The only limitation to keep in mind is that only `terms` can become a `course` o
                     "es-MX": "Esta es la descripción objetiva",
                 },
             }, // objective
-            "url":,
+            "url":, // in case it is an external URL
             "launch_parameters": Custom_Object,
             "persona": [ "capability", "capability", "capability" ], //matched against launchdata
             "object_id": { /// makes this reusable, extendable & multilingual

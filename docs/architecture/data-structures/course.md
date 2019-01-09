@@ -123,7 +123,7 @@ The only limitation to keep in mind is that only `terms` can become a `course` o
 
 ##  2. <a name='ActualStructure'></a>Actual Structure
 
-> **@todo** Explore how reusable blocks work in WP, follow the same mental model
+> **@todo** Explore how reusable blocks work in WP, follow the same mental model for `sections`.
 
 ```js
 {

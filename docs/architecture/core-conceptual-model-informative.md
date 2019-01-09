@@ -77,12 +77,12 @@ Includes Learning, Learning Management and Instruction
     "agent": ,
     "registration": ,
     "launch_data": {
-        "context_template":,
+        "context_template": Template_Object, //json describing a schema for context
         "launch_mode": "normal" //, "browse", "review"(, "mentor"),
         "launch_parameters": Custom_Object,
         "mastery_score": 0-1,
         "move_on": "passed", //"completed", "completed_and_passed", "completed_or_passed", "not_applicable",
-        "return_url":,
+        "return_url": "some_url", // where the unit should redirect to on exit
         "role": {"identifier of the composite role generated for the WP_User from Role, Post, etc"},
     },
 }
@@ -152,7 +152,9 @@ Includes Learning, Learning Management and Instruction
         "description": {
                 "en-US": "This is the section description",
                 "es-MX": "Este es la descripción del sección",
-            },
+        },
+        "object_type":      "term",
+        "object_subtype":   WP_Term->taxonomy,
         "objective": {
             "id",
             "title": {
@@ -163,8 +165,6 @@ Includes Learning, Learning Management and Instruction
                 "en-US": "This is the objective description",
                 "es-MX": "Esta es la descripción objetiva",
             },
-            "object_type":      "term",
-            "object_subtype":   WP_Term->taxonomy,
         }, // objective
         "unit": {
             "id",

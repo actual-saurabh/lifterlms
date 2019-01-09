@@ -12,6 +12,7 @@
 	* 1.7. [Sections and Course Heirarchy](#SectionsandCourseHeirarchy)
 	* 1.8. [Course vs Section](#CoursevsSection)
 	* 1.9. [References, not Actuals](#ReferencesnotActuals)
+	* 1.10. [Reusability](#Reusability)
 * 2. [Actual Structure](#ActualStructure)
 
 <!-- vscode-markdown-toc-config
@@ -120,6 +121,16 @@ The key thing to take away is that the Course Struture comprising of a single ro
 * `'object_id'` refers to the actual `'term_id'` or `'post_id'`
 
 The only limitation to keep in mind is that only `terms` can become a `course` or `section` and only `posts` can become a `unit`. The opportunity is that _any_ `term` of _any_ `taxonomy` can become a `course` or a `section` of a course and _any_ `post_type` can become a `unit`.
+
+###  1.10. <a name='Reusability'></a>Reusability
+
+Any `section` or `unit` is inherently reusable. The content of a `lesson` for example, is a different post of the post_type `lesson`, stored only as a _reference_ in the metadata of the post of the post_type `unit`, the same `lesson` could be referenced in multiple `units`.
+
+Changing the `lesson` will change the content presented in _all_ the `units` that refer to it.
+
+If a `lesson` is referenced in more than one `unit`, editing them should accomodate a warning/notice informing the users of the impact. This warning/notice should then allow creators to _clone_ the `lesson` instead if they wish to maintain distinct content.
+
+> If such clones are different in content but serve the same _purpose_ (learning _goal_), they could share the same _objective_ reference.
 
 ##  2. <a name='ActualStructure'></a>Actual Structure
 

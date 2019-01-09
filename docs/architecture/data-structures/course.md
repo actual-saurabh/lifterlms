@@ -160,7 +160,7 @@ Which is why the export/import format should have the slug instead of the ID. Wh
     "object_type":   WP_Term->taxonomy,
     "persona": [ "capability", "capability", "capability" ], //matched against launchdata
     "section" : {
-        "id": WP_Post->ID, // post_type "section"
+        "id": WP_Term->ID, // taxonomy "section"
         "title": {
             "en-US": "This is the section title",
             "es-MX": "Este es el título del sección"

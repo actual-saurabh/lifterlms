@@ -1,3 +1,5 @@
+# Course Structure
+
 <!-- vscode-markdown-toc -->
 * 1. [Thought Process](#ThoughtProcess)
 	* 1.1. [Courses as Navigation Menus](#CoursesasNavigationMenus)
@@ -16,9 +18,7 @@
 	numbering=true
 	autoSave=true
 	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc --># Course Structure
-
-
+<!-- /vscode-markdown-toc -->
 
 ##  1. <a name='ThoughtProcess'></a>Thought Process
 

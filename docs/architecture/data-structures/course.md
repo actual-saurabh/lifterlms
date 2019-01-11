@@ -57,7 +57,7 @@ If we emulate this logic
 
 Until now, sections were understood as pieces of the course (section = to cut). *cmi5* calls such entities `blocks` (as in building blocks or components of a whole) and they are understood as a `collection` of `units`, `objectives` and other `sections`. In this sense the relationship between a `section` and a `course` is the same as that between a `block` and a WordPress `post` in 5.x.
 
-![2 views of Chunking](../../assets/2-Views-of-Chunking,jpg)
+![2 views of Chunking](../../assets/2-Views-of-Chunking.jpg)
 
 ###  1.3. <a name='CourseasaSection'></a>Course as a Section
 

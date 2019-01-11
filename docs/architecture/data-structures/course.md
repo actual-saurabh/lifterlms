@@ -4,7 +4,9 @@
 * 1. [Thought Process](#ThoughtProcess)
 	* 1.1. [Courses as Navigation Menus](#CoursesasNavigationMenus)
 		* 1.1.1. [WP Navigation Menu Architecture](#WPNavigationMenuArchitecture)
-		* 1.1.2. [Emulating WP Navigation Menu Architecture](#EmulatingWPNavigationMenuArchitecture)
+		* 1.1.2. [Key Takeaways from WP Nav Menu](#KeyTakeawaysfromWPNavMenu)
+		* 1.1.3. [Emulating WP Navigation Menu Architecture](#EmulatingWPNavigationMenuArchitecture)
+		* 1.1.4. [Key Takeaways for Emulation](#KeyTakeawaysforEmulation)
 	* 1.2. [Sections as Collections & Sections as Blocks](#SectionsasCollectionsSectionsasBlocks)
 	* 1.3. [Course as a Section](#CourseasaSection)
 	* 1.4. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
@@ -44,7 +46,15 @@ Consider the fact that a course structure actually looks like menu (especially w
 * When loading a menu, WordPress needs a slug to identify the term (the name of the menu) and then get all post types (menu items) associated with it. See: https://developer.wordpress.org/reference/functions/wp_nav_menu/
 * Each menu item is a separate post object allowing it to become a extremely flexible reference for any kind of object.
 
-####  1.1.2. <a name='EmulatingWPNavigationMenuArchitecture'></a>Emulating WP Navigation Menu Architecture
+####  1.1.2. <a name='KeyTakeawaysfromWPNavMenu'></a>Key Takeaways from WP Nav Menu
+
+* A menu item is *not* the same as the link that it represents. That is, when you add a page (or any other post type) to a navigation menu, a new post is created in the database that refers to (serves as a **reference** to) the page you add.
+* This separates the menu **structure** from the **content** that is displayed when you *open* the menu item.
+* This means that the same page can be added to multiple menus. Hypothetically, if the menu item and the page were the same thing, everytime you'd add the page to a new menu, it'd have to be duplicated. (This is what happens in LifterLMS right now). It's obvious how this helps in **reusability**.
+* A menu item can be a reference for an **external resource**.
+
+
+####  1.1.3. <a name='EmulatingWPNavigationMenuArchitecture'></a>Emulating WP Navigation Menu Architecture
 
 * Use a taxonomy called `'course'`.
 * Every course created is a term of the taxonomy `'course'`.
@@ -54,7 +64,28 @@ Consider the fact that a course structure actually looks like menu (especially w
     * `'type'` refers to the available object types, `'taxonomy'` or `'post_type'`
     * `'object_id'` refers to the actual `'term_id'` or `'post_id'`
     * Like navigation menu items, it could simply refer to an external link!
-* When loading a course, LifterLMS needs a slug (or id) to identify the term (the name of the course) and then get all post types (units) associated with it. * Each unit is a separate post object allowing it to become a extremely flexible reference for any kind of object (events, products, attachment, etc).
+* When loading a course, LifterLMS needs a slug (or id) to identify the term (the name of the course) and then get all post types (units) associated with it.
+* Each unit is a separate post object allowing it to become a extremely flexible reference for any kind of object (events, products, attachment, etc).
+
+####  1.1.4. <a name='KeyTakeawaysforEmulation'></a>Key Takeaways for Emulation
+
+* This will separate the *structure* from the *content*. This means that information relevant to the structure can become independent of the information relevant to the content.
+* This means that things like drip, pre-requisites, etc can be stored alongside the structure and the same lesson content could have different behaviours in different courses!
+* This also means that content can be reused in multiple courses.
+* This also means that many more kinds of content can be used inside courses. This opens up exciting opportunties by allowing custom post types from other plugins to be used inside courses. Obviously, the core types (pages, posts, attachments, etc) can also be used inside courses!
+    * So, one step in the course could actually be
+* By making a course a term (instead of a post type, as it is currently), landing/sales pages also stop being a concern of the course. They can be units inside the course. This means that:
+    * Landing pages can be reused across courses or sections.
+    * Separate landing pages could be created for different types of users.
+    * Landing pages could be added anywhere in the course structure including inside sections, quizzes, etc.
+    * Similarly, you could have landing pages interspersed within the course structure functioning like exit pages or anything else you could think of.
+* Finally, just like menu items, a course element could refer to an *external* page/ resource. Although LifterLMS can't control or track such external resources, custom code couuld be used to extend this.
+    * A step in the course could be completing an activity on a third party site or app. If such a site/app has an API, it could send a notification to a bit of custom code which could then interface with LifterLMS to mark it complete.
+    * Example 1: A step in the course could be drafting and sending an email. The receiving application could send an API call to a bit of custom code (in an addon) that interfaces with LifterLMS to mark this step complete.
+    * Example 2: A step in the course could be attending a Zoom meeting. Once, the meeting is over, Zoom can send attendance data to an addon that then completes the step for those who actually attended. This could work as well for GoToWebinar or any other such application!
+    * Example 3: A step in the course could be receiving a physical product (that you've shipped to your students). You could add a QR code to the packaging that resolves to a URL where a bit of custom code interfaces with LifterLMS to mark this step as complete.
+    * Example 4: A step in the course could be going to a physical location. With geolocation, an addon could track if a student did actually reach the location and interface with LifterLMS to mark this complete. (You could power a full Scavenger/ Treasure Hunt with this and the QR code example (where QR code are added to the actual scavenged items).
+    * The possibilities and opportunities are endless.
 
 ###  1.2. <a name='SectionsasCollectionsSectionsasBlocks'></a>Sections as Collections & Sections as Blocks
 
@@ -66,7 +97,7 @@ Until now, sections were understood as pieces of the course (section = to cut). 
 
 In this sense, a `course` is also a `section` (or at least behaves like it) since it is also a `collection` of `units`, `objectives` and other `sections`.
 
-From its `section` nature, a `course` also gets the traits of a `block`. This means that one course can be a `section` in another `course`. Or, you could create any level of organisation. The levels in this organisation could be called anything, be anything as long as it possesses the _attributes_ & _behaviour_ or what is technically called the **trait** of a section, it can do everything that a section can.
+From its `section` nature, a `course` also gets the traits of a `block`. This means that one course can be a `section` in another `course`. Or, you could create any level of organisation. The levels in this organisation could be called anything, be anything as long as it possesses the *attributes* & *behaviour* or what is technically called the **trait** of a section, it can do everything that a section can.
 
 So, what constitutes a course is entirely upto the course creator.
 
@@ -112,7 +143,7 @@ Unlike builtin WordPress objects, the relationship between Sections and Course i
 
 ###  1.8. <a name='CoursevsSection'></a>Course vs Section
 
-Everything else being equivalent, the only difference between a `course` and a `section` is that a `course` is the _root_ node of a _tree data structure_,  `section` is a _node_ (and `unit` is the leaf).
+Everything else being equivalent, the only difference between a `course` and a `section` is that a `course` is the *root* node of a *tree data structure*,  `section` is a *node* (and `unit` is the leaf).
 
 Any other behaviour should be decoupled (like sales, drip, etc) from `courses` and `sections` and they should be free to behave the way they like.
 
@@ -126,17 +157,17 @@ The key thing to take away is that the Course Struture comprising of a single ro
 * `'type'` refers to the available object types, `'taxonomy'` or `'post_type'`
 * `'object_id'` refers to the actual `'term_id'` or `'post_id'`
 
-The only limitation to keep in mind is that only `terms` can become a `course` or `section` and only `posts` can become a `unit`. The opportunity is that _any_ `term` of _any_ `taxonomy` can become a `course` or a `section` of a course and _any_ `post_type` can become a `unit`.
+The only limitation to keep in mind is that only `terms` can become a `course` or `section` and only `posts` can become a `unit`. The opportunity is that *any* `term` of *any* `taxonomy` can become a `course` or a `section` of a course and *any* `post_type` can become a `unit`.
 
 ###  1.10. <a name='Reusability'></a>Reusability
 
-Any `section` or `unit` is inherently reusable. The content of a `lesson` for example, is a different post of the post_type `lesson`, stored only as a _reference_ in the metadata of the post of the post_type `unit`, the same `lesson` could be referenced in multiple `units`.
+Any `section` or `unit` is inherently reusable. The content of a `lesson` for example, is a different post of the post_type `lesson`, stored only as a *reference* in the metadata of the post of the post_type `unit`, the same `lesson` could be referenced in multiple `units`.
 
-Changing the `lesson` will change the content presented in _all_ the `units` that refer to it.
+Changing the `lesson` will change the content presented in *all* the `units` that refer to it.
 
-If a `lesson` is referenced in more than one `unit`, editing them should accomodate a warning/notice informing the users of the impact. This warning/notice should then allow creators to _clone_ the `lesson` instead if they wish to maintain distinct content.
+If a `lesson` is referenced in more than one `unit`, editing them should accomodate a warning/notice informing the users of the impact. This warning/notice should then allow creators to *clone* the `lesson` instead if they wish to maintain distinct content.
 
-> If such clones are different in content but serve the same _purpose_ (learning _goal_), they could share the same _objective_ reference.
+> If such clones are different in content but serve the same *purpose* (learning *goal*), they could share the same *objective* reference.
 
 ###  1.11. <a name='ExportImport'></a>Export/ Import
 

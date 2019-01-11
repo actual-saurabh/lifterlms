@@ -3,6 +3,8 @@
 <!-- vscode-markdown-toc -->
 * 1. [Thought Process](#ThoughtProcess)
 	* 1.1. [Courses as Navigation Menus](#CoursesasNavigationMenus)
+		* 1.1.1. [WP Navigation Menu Architecture](#WPNavigationMenuArchitecture)
+		* 1.1.2. [Emulating WP Navigation Menu Architecture](#EmulatingWPNavigationMenuArchitecture)
 	* 1.2. [Sections as Collections & Sections as Blocks](#SectionsasCollectionsSectionsasBlocks)
 	* 1.3. [Course as a Section](#CourseasaSection)
 	* 1.4. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
@@ -26,7 +28,9 @@
 
 ###  1.1. <a name='CoursesasNavigationMenus'></a>Courses as Navigation Menus
 
-Consider the fact that a course structure actually looks like menu, especially when presented as the syllabus or as an outline.
+Consider the fact that a course structure actually looks like menu (especially when presented as the syllabus or as an outline). With that in mind, its architecture could borrow a thing or two from the architecture of navigation menus.
+
+####  1.1.1. <a name='WPNavigationMenuArchitecture'></a>WP Navigation Menu Architecture
 
 * WordPress uses a taxonomy called `'nav_menu'`. See: https://developer.wordpress.org/reference/functions/wp_get_nav_menu_object/
 * Every menu created is a term of the taxonomy `'nav_menu'`.
@@ -37,10 +41,10 @@ Consider the fact that a course structure actually looks like menu, especially w
     1. `'object_id'` refers to the actual `'term_id'` or `'post_id'`
     * This is the general language used elsewhere in WP. In other contexts `'object'` can be `'comment'` and `'type'` could be `'comment_type'`.
     * There is scope for extending this to include custom objects (I have used widgets as menu items).
-* When loading a menu, WordPress needs a slug to identify the term and then get all post types by that term. See: https://developer.wordpress.org/reference/functions/wp_nav_menu/
+* When loading a menu, WordPress needs a slug to identify the term (the name of the menu) and then get all post types (menu items) associated with it. See: https://developer.wordpress.org/reference/functions/wp_nav_menu/
 * Each menu item is a separate post object allowing it to become a extremely flexible reference for any kind of object.
 
-If we emulate this logic
+####  1.1.2. <a name='EmulatingWPNavigationMenuArchitecture'></a>Emulating WP Navigation Menu Architecture
 
 * Use a taxonomy called `'course'`.
 * Every course created is a term of the taxonomy `'course'`.
@@ -50,8 +54,7 @@ If we emulate this logic
     * `'type'` refers to the available object types, `'taxonomy'` or `'post_type'`
     * `'object_id'` refers to the actual `'term_id'` or `'post_id'`
     * Like navigation menu items, it could simply refer to an external link!
-* When loading a course, LifterLMS needs a slug (or id) to identify the term and then get all post types by that term. See: https://developer.wordpress.org/reference/functions/wp_nav_menu/
-* Each menu item is a separate post object allowing it to become a extremely flexible reference for any kind of object (events, products, attachment, etc).
+* When loading a course, LifterLMS needs a slug (or id) to identify the term (the name of the course) and then get all post types (units) associated with it. * Each unit is a separate post object allowing it to become a extremely flexible reference for any kind of object (events, products, attachment, etc).
 
 ###  1.2. <a name='SectionsasCollectionsSectionsasBlocks'></a>Sections as Collections & Sections as Blocks
 
@@ -195,7 +198,6 @@ Which is why the export/import format should have the slug instead of the ID. Wh
             },
             "object":      post, term, comment, object,
             "object_type":   WP_Post->post_type, WP_Term->taxonomy,
-
         }, // objective
         "unit": {
             "id": WP_Post->ID, // post_type "unit"
@@ -211,7 +213,7 @@ Which is why the export/import format should have the slug instead of the ID. Wh
                     "es-MX": "Esta es la descripción de la unidad",
                 },
             "objective": {
-                "id",
+                "id": WP_Post->ID, // post_type "objective"
                 "title": {
                     "en-US": "This is the objective title",
                     "es-MX": "Este es el título del objetivo",
@@ -220,6 +222,13 @@ Which is why the export/import format should have the slug instead of the ID. Wh
                     "en-US": "This is the objective description",
                     "es-MX": "Esta es la descripción objetiva",
                 },
+                "object_id": { /// makes this reusable, extendable & multilingual
+                  "en-US":  WP_Post->ID,
+                  "es-MX": WP_Post->ID
+                  }
+                },
+                "object":      post, term, comment, object,
+                "object_type":   WP_Post->post_type, WP_Term->taxonomy,
             }, // objective
             "url":, // in case it is an external URL
             "launch_parameters": Custom_Object,

@@ -101,14 +101,22 @@ Consider the fact that a course structure actually looks like menu (especially w
 
 ##  2. <a name='ExtendingNavigationMenuArchitecture'></a>Extending Navigation Menu Architecture for Sections
 
+WP's Navigation Menu Architecture treats taxonomy terms like a post or any other url to be referenced. In this aspect courses differ from nav menus since according to cmi5/xAPI specs, `courses` are chunked into `sections`. (cmi5 calls them `blocks` but this term can cause confusion with editorial `blocks` in WordPress. Additionally, these entities have always been called `sections` in LifterLMS).
 
+### Sections as Blocks
 
-
-###  2.1. <a name='SectionsasCollectionsSectionsasBlocks'></a>Sections as Collections & Sections as Blocks
-
-Until now, sections were understood as pieces of the course (section = to cut). *cmi5* calls such entities `blocks` (as in building blocks or components of a whole) and they are understood as a `collection` of `units`, `objectives` and other `sections`. In this sense the relationship between a `section` and a `course` is the same as that between a `block` and a WordPress `post` in 5.x.
+As chunking entities, `sections` can be perceived as pieces derived from breaking down the course into pieces (which is what the current implementation, more or less looks like, to section = to cut). However, emulating the mental model associated with `blocks`, they can also be understood as *components* that can be used and reused to form other `sections` and `courses`.
 
 ![2 views of Chunking](../../assets/2-Views-of-Chunking.jpg)
+
+### Sections as Collections
+
+Sections are also a `collection` of `units`, `objectives` and other `sections`. In this sense the relationship between a `section` and a `course` is the same as that between a `block` and a WordPress `post` in 5.x.
+
+### Sections as Nodes in a Tree Data Structure
+
+![2 views of Chunking](../../assets/binary_tree.jpg)
+
 
 ###  2.2. <a name='CourseasaSection'></a>Course as a Section
 

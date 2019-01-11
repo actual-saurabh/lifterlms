@@ -18,7 +18,7 @@
 
 ##  1. <a name='Basedoncmi5andxAPISpecs'></a>Based on cmi5 and xAPI Specs
 
-This proposed architecture heavily borrows concepts from [cmi5](https://github.com/AICC/CMI-5_Spec_Current/blob/quartz/cmi5_spec.md) and [xAPI]() specifications. However, it doesn't actually implement them and doesn't aim to comply with them (at least, as of now).
+This proposed architecture heavily borrows concepts from [cmi5](https://github.com/AICC/CMI-5_Spec_Current/blob/quartz/cmi5_spec.md) and [xAPI](https://github.com/adlnet/xAPI-Spec) specifications. However, it doesn't actually implement them and doesn't aim to comply with them (at least, as of now).
 
 As it stands, the data structures and mechanisms are similar to those expected by these specifications. This gap is expected be bridged by an addon where cmi5/xAPI compliance or compatibility is needed. There are two reasons for this:
 

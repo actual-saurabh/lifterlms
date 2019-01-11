@@ -8,18 +8,20 @@
 	* 1.4. [Key Takeaways for Emulation](#KeyTakeawaysforEmulation)
 	* 1.5. [Navigation Menu Theme Location for Whole Menu Reusability](#NavigationMenuThemeLocationforWholeMenuReusability)
 	* 1.6. [Emulating Theme Locations for Course Reusability](#EmulatingThemeLocationsforCourseReusability)
-* 2. [Extending Navigation Menu Architecture](#ExtendingNavigationMenuArchitecture)
-	* 2.1. [Sections as Collections & Sections as Blocks](#SectionsasCollectionsSectionsasBlocks)
-	* 2.2. [Course as a Section](#CourseasaSection)
-	* 2.3. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
-	* 2.4. [Quizzes & Assignments as Sections (Taxonomy Terms)](#QuizzesAssignmentsasSectionsTaxonomyTerms)
-	* 2.5. [Objectives & Units as Post Types](#ObjectivesUnitsasPostTypes)
-		* 2.5.1. [Unit as a Collection](#UnitasaCollection)
-	* 2.6. [Sections and Course Heirarchy](#SectionsandCourseHeirarchy)
-	* 2.7. [Course vs Section](#CoursevsSection)
-	* 2.8. [References, not Actuals](#ReferencesnotActuals)
-	* 2.9. [Reusability](#Reusability)
-	* 2.10. [Export/ Import](#ExportImport)
+* 2. [Extending Navigation Menu Architecture for Sections](#ExtendingNavigationMenuArchitectureforSections)
+	* 2.1. [Sections as Blocks](#SectionsasBlocks)
+	* 2.2. [Sections as Collections](#SectionsasCollections)
+	* 2.3. [Sections as Nodes in a Tree Data Structure](#SectionsasNodesinaTreeDataStructure)
+	* 2.4. [Course as a Section](#CourseasaSection)
+	* 2.5. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
+	* 2.6. [Quizzes & Assignments as Sections (Taxonomy Terms)](#QuizzesAssignmentsasSectionsTaxonomyTerms)
+	* 2.7. [Objectives & Units as Post Types](#ObjectivesUnitsasPostTypes)
+		* 2.7.1. [Unit as a Collection](#UnitasaCollection)
+	* 2.8. [Sections and Course Heirarchy](#SectionsandCourseHeirarchy)
+	* 2.9. [Course vs Section](#CoursevsSection)
+	* 2.10. [References, not Actuals](#ReferencesnotActuals)
+	* 2.11. [Reusability](#Reusability)
+	* 2.12. [Export/ Import](#ExportImport)
 * 3. [Actual Structure](#ActualStructure)
 
 <!-- vscode-markdown-toc-config
@@ -99,26 +101,25 @@ Consider the fact that a course structure actually looks like menu (especially w
 * Now, any `term` of any `taxonomy` can be used as the actual `course`.
 * This means that `courses` could be called (for example) `stories` and `workshops` by using custom taxonomies called `stories` and `workshops`.
 
-##  2. <a name='ExtendingNavigationMenuArchitecture'></a>Extending Navigation Menu Architecture for Sections
+##  2. <a name='ExtendingNavigationMenuArchitectureforSections'></a>Extending Navigation Menu Architecture for Sections
 
 WP's Navigation Menu Architecture treats taxonomy terms like a post or any other url to be referenced. In this aspect courses differ from nav menus since according to cmi5/xAPI specs, `courses` are chunked into `sections`. (cmi5 calls them `blocks` but this term can cause confusion with editorial `blocks` in WordPress. Additionally, these entities have always been called `sections` in LifterLMS).
 
-### Sections as Blocks
+###  2.1. <a name='SectionsasBlocks'></a>Sections as Blocks
 
 As chunking entities, `sections` can be perceived as pieces derived from breaking down the course into pieces (which is what the current implementation, more or less looks like, to section = to cut). However, emulating the mental model associated with `blocks`, they can also be understood as *components* that can be used and reused to form other `sections` and `courses`.
 
 ![2 views of Chunking](../../assets/2-Views-of-Chunking.jpg)
 
-### Sections as Collections
+###  2.2. <a name='SectionsasCollections'></a>Sections as Collections
 
 Sections are also a `collection` of `units`, `objectives` and other `sections`. In this sense the relationship between a `section` and a `course` is the same as that between a `block` and a WordPress `post` in 5.x.
 
-### Sections as Nodes in a Tree Data Structure
+###  2.3. <a name='SectionsasNodesinaTreeDataStructure'></a>Sections as Nodes in a Tree Data Structure
 
 ![2 views of Chunking](../../assets/binary_tree.jpg)
 
-
-###  2.2. <a name='CourseasaSection'></a>Course as a Section
+###  2.4. <a name='CourseasaSection'></a>Course as a Section
 
 In this sense, a `course` is also a `section` (or at least behaves like it) since it is also a `collection` of `units`, `objectives` and other `sections`.
 
@@ -128,7 +129,7 @@ So, what constitutes a course is entirely upto the course creator.
 
 A course could be a 3 year thing divided into `years`, `semesters`, `subjects`, `topics`, etc. Any of these could behave like a course and the levels below it will behave like sections.
 
-###  2.3. <a name='CourseSectionsasTaxonomy'></a>Course & Sections as Taxonomy
+###  2.5. <a name='CourseSectionsasTaxonomy'></a>Course & Sections as Taxonomy
 
 A building block is a building block because it has a limited kind of independent existence, apart from being a part of the whole.
 
@@ -140,13 +141,13 @@ Like `courses`, `sections` also behave like navigation menus in their own right,
 
 The relationship between `terms` in this case is complicated because it can happen across taxonomies. The relationship is derived from the Course Structure.
 
-###  2.4. <a name='QuizzesAssignmentsasSectionsTaxonomyTerms'></a>Quizzes & Assignments as Sections (Taxonomy Terms)
+###  2.6. <a name='QuizzesAssignmentsasSectionsTaxonomyTerms'></a>Quizzes & Assignments as Sections (Taxonomy Terms)
 
 Section behaviour for Quizzes & Assignments means they can be used outside courses. Any kind of learning experience is possible.
 
 Second, they could exist outside a unit.
 
-###  2.5. <a name='ObjectivesUnitsasPostTypes'></a>Objectives & Units as Post Types
+###  2.7. <a name='ObjectivesUnitsasPostTypes'></a>Objectives & Units as Post Types
 
 > Objectives deserve special and detailed attention, elsewhere and later. Limiting this to Units
 
@@ -154,7 +155,7 @@ Units are leaf nodes, non-heirarchical in nature. Units also represent the state
 
 That is why `'unit'`is a custom `post_type`.
 
-####  2.5.1. <a name='UnitasaCollection'></a>Unit as a Collection
+####  2.7.1. <a name='UnitasaCollection'></a>Unit as a Collection
 
 A unit can also behave like a collection of activities represented by `blocks` that make up the unit content.
 
@@ -162,17 +163,17 @@ A unit can also behave like a collection of activities represented by `blocks` t
 
 The collection behaviour of a unit is not a concern of the Course Structure. It is the concern of the Unit and uses WordPress blocks as components of a unit.
 
-###  2.6. <a name='SectionsandCourseHeirarchy'></a>Sections and Course Heirarchy
+###  2.8. <a name='SectionsandCourseHeirarchy'></a>Sections and Course Heirarchy
 
 Unlike builtin WordPress objects, the relationship between Sections and Course is a parent child relationship. Just as different `post_types` can have a parent-child relationship, it should be possible to have `course` terms to have parent-child relationships with `section` term.
 
-###  2.7. <a name='CoursevsSection'></a>Course vs Section
+###  2.9. <a name='CoursevsSection'></a>Course vs Section
 
 Everything else being equivalent, the only difference between a `course` and a `section` is that a `course` is the *root* node of a *tree data structure*,  `section` is a *node* (and `unit` is the leaf).
 
 Any other behaviour should be decoupled (like sales, drip, etc) from `courses` and `sections` and they should be free to behave the way they like.
 
-###  2.8. <a name='ReferencesnotActuals'></a>References, not Actuals
+###  2.10. <a name='ReferencesnotActuals'></a>References, not Actuals
 
 The key thing to take away is that the Course Struture comprising of a single root level `term` of the taxonomy `course`, multiple nested `terms` of the taxonomy `section` and `posts` of the post_type `unit` all contain references to other terms or posts that form the actual content and its organisation.
 
@@ -184,7 +185,7 @@ The key thing to take away is that the Course Struture comprising of a single ro
 
 The only limitation to keep in mind is that only `terms` can become a `course` or `section` and only `posts` can become a `unit`. The opportunity is that *any* `term` of *any* `taxonomy` can become a `course` or a `section` of a course and *any* `post_type` can become a `unit`.
 
-###  2.9. <a name='Reusability'></a>Reusability
+###  2.11. <a name='Reusability'></a>Reusability
 
 Any `section` or `unit` is inherently reusable. The content of a `lesson` for example, is a different post of the post_type `lesson`, stored only as a *reference* in the metadata of the post of the post_type `unit`, the same `lesson` could be referenced in multiple `units`.
 
@@ -194,7 +195,7 @@ If a `lesson` is referenced in more than one `unit`, editing them should accomod
 
 > If such clones are different in content but serve the same *purpose* (learning *goal*), they could share the same *objective* reference.
 
-###  2.10. <a name='ExportImport'></a>Export/ Import
+###  2.12. <a name='ExportImport'></a>Export/ Import
 
 The content could be exported and imported independently of LifterLMS. The structure is a bit tricky because all the associations between posts and terms are on the basis of their IDs generated by the database.
 

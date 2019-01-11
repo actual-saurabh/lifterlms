@@ -1,24 +1,26 @@
 # Course Structure
 
 <!-- vscode-markdown-toc -->
-* 1. [Thought Process](#ThoughtProcess)
-	* 1.1. [Courses as Navigation Menus](#CoursesasNavigationMenus)
-		* 1.1.1. [WP Navigation Menu Architecture](#WPNavigationMenuArchitecture)
-		* 1.1.2. [Key Takeaways from WP Nav Menu](#KeyTakeawaysfromWPNavMenu)
-		* 1.1.3. [Emulating WP Navigation Menu Architecture](#EmulatingWPNavigationMenuArchitecture)
-		* 1.1.4. [Key Takeaways for Emulation](#KeyTakeawaysforEmulation)
-	* 1.2. [Sections as Collections & Sections as Blocks](#SectionsasCollectionsSectionsasBlocks)
-	* 1.3. [Course as a Section](#CourseasaSection)
-	* 1.4. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
-	* 1.5. [Quizzes & Assignments as Sections (Taxonomy Terms)](#QuizzesAssignmentsasSectionsTaxonomyTerms)
-	* 1.6. [Objectives & Units as Post Types](#ObjectivesUnitsasPostTypes)
-		* 1.6.1. [Unit as a Collection](#UnitasaCollection)
-	* 1.7. [Sections and Course Heirarchy](#SectionsandCourseHeirarchy)
-	* 1.8. [Course vs Section](#CoursevsSection)
-	* 1.9. [References, not Actuals](#ReferencesnotActuals)
-	* 1.10. [Reusability](#Reusability)
-	* 1.11. [Export/ Import](#ExportImport)
-* 2. [Actual Structure](#ActualStructure)
+* 1. [WP Navigation Menu Architecture for Courses](#WPNavigationMenuArchitectureforCourses)
+	* 1.1. [WP Navigation Menu Architecture](#WPNavigationMenuArchitecture)
+	* 1.2. [Key Takeaways from WP Nav Menu](#KeyTakeawaysfromWPNavMenu)
+	* 1.3. [Emulating WP Navigation Menu Architecture](#EmulatingWPNavigationMenuArchitecture)
+	* 1.4. [Key Takeaways for Emulation](#KeyTakeawaysforEmulation)
+	* 1.5. [Navigation Menu Theme Location for Whole Menu Reusability](#NavigationMenuThemeLocationforWholeMenuReusability)
+	* 1.6. [Emulating Theme Locations for Course Reusability](#EmulatingThemeLocationsforCourseReusability)
+* 2. [Extending Navigation Menu Architecture](#ExtendingNavigationMenuArchitecture)
+	* 2.1. [Sections as Collections & Sections as Blocks](#SectionsasCollectionsSectionsasBlocks)
+	* 2.2. [Course as a Section](#CourseasaSection)
+	* 2.3. [Course & Sections as Taxonomy](#CourseSectionsasTaxonomy)
+	* 2.4. [Quizzes & Assignments as Sections (Taxonomy Terms)](#QuizzesAssignmentsasSectionsTaxonomyTerms)
+	* 2.5. [Objectives & Units as Post Types](#ObjectivesUnitsasPostTypes)
+		* 2.5.1. [Unit as a Collection](#UnitasaCollection)
+	* 2.6. [Sections and Course Heirarchy](#SectionsandCourseHeirarchy)
+	* 2.7. [Course vs Section](#CoursevsSection)
+	* 2.8. [References, not Actuals](#ReferencesnotActuals)
+	* 2.9. [Reusability](#Reusability)
+	* 2.10. [Export/ Import](#ExportImport)
+* 3. [Actual Structure](#ActualStructure)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -26,13 +28,11 @@
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-##  1. <a name='ThoughtProcess'></a>Thought Process
-
-###  1.1. <a name='CoursesasNavigationMenus'></a>Courses as Navigation Menus
+##  1. <a name='WPNavigationMenuArchitectureforCourses'></a>WP Navigation Menu Architecture for Courses
 
 Consider the fact that a course structure actually looks like menu (especially when presented as the syllabus or as an outline). With that in mind, its architecture could borrow a thing or two from the architecture of navigation menus.
 
-####  1.1.1. <a name='WPNavigationMenuArchitecture'></a>WP Navigation Menu Architecture
+###  1.1. <a name='WPNavigationMenuArchitecture'></a>WP Navigation Menu Architecture
 
 * WordPress uses a taxonomy called `'nav_menu'`. See: https://developer.wordpress.org/reference/functions/wp_get_nav_menu_object/
 * Every menu created is a term of the taxonomy `'nav_menu'`.
@@ -46,15 +46,14 @@ Consider the fact that a course structure actually looks like menu (especially w
 * When loading a menu, WordPress needs a slug to identify the term (the name of the menu) and then get all post types (menu items) associated with it. See: https://developer.wordpress.org/reference/functions/wp_nav_menu/
 * Each menu item is a separate post object allowing it to become a extremely flexible reference for any kind of object.
 
-####  1.1.2. <a name='KeyTakeawaysfromWPNavMenu'></a>Key Takeaways from WP Nav Menu
+###  1.2. <a name='KeyTakeawaysfromWPNavMenu'></a>Key Takeaways from WP Nav Menu
 
 * A menu item is *not* the same as the link that it represents. That is, when you add a page (or any other post type) to a navigation menu, a new post is created in the database that refers to (serves as a **reference** to) the page you add.
 * This separates the menu **structure** from the **content** that is displayed when you *open* the menu item.
 * This means that the same page can be added to multiple menus. Hypothetically, if the menu item and the page were the same thing, everytime you'd add the page to a new menu, it'd have to be duplicated. (This is what happens in LifterLMS right now). It's obvious how this helps in **reusability**.
 * A menu item can be a reference for an **external resource**.
 
-
-####  1.1.3. <a name='EmulatingWPNavigationMenuArchitecture'></a>Emulating WP Navigation Menu Architecture
+###  1.3. <a name='EmulatingWPNavigationMenuArchitecture'></a>Emulating WP Navigation Menu Architecture
 
 * Use a taxonomy called `'course'`.
 * Every course created is a term of the taxonomy `'course'`.
@@ -67,7 +66,7 @@ Consider the fact that a course structure actually looks like menu (especially w
 * When loading a course, LifterLMS needs a slug (or id) to identify the term (the name of the course) and then get all post types (units) associated with it.
 * Each unit is a separate post object allowing it to become a extremely flexible reference for any kind of object (events, products, attachment, etc).
 
-####  1.1.4. <a name='KeyTakeawaysforEmulation'></a>Key Takeaways for Emulation
+###  1.4. <a name='KeyTakeawaysforEmulation'></a>Key Takeaways for Emulation
 
 * This will separate the *structure* from the *content*. This means that information relevant to the structure can become independent of the information relevant to the content.
 * This means that things like drip, pre-requisites, etc can be stored alongside the structure and the same lesson content could have different behaviours in different courses!
@@ -87,13 +86,31 @@ Consider the fact that a course structure actually looks like menu (especially w
     * Example 4: A step in the course could be going to a physical location. With geolocation, an addon could track if a student did actually reach the location and interface with LifterLMS to mark this complete. (You could power a full Scavenger/ Treasure Hunt with this and the QR code example (where QR code are added to the actual scavenged items).
     * The possibilities and opportunities are endless.
 
-###  1.2. <a name='SectionsasCollectionsSectionsasBlocks'></a>Sections as Collections & Sections as Blocks
+###  1.5. <a name='NavigationMenuThemeLocationforWholeMenuReusability'></a>Navigation Menu Theme Location for Whole Menu Reusability
+
+* A whole Navigation Menu can be reused in multiple `locations` on the theme.
+* Such a `location` behaves like a menu item in the sense that it simply stores a reference to the actual navigation menu.
+* Locations are a non-heirarchical virtual/system taxonomy (not stored in the taxonomy, term db structure) and each term has to be registered using https://developer.wordpress.org/reference/functions/register_nav_menu/. This is similar to how lists of post statuses, post types and taxonomies are also system taxonomies.
+
+###  1.6. <a name='EmulatingThemeLocationsforCourseReusability'></a>Emulating Theme Locations for Course Reusability
+
+* Use `course` as a reference (like the theme location of navigation menu) instead of like the `'nav_menu'` by replicating menu item behaviour.
+* Instead of a virual/system taxonomy, we use a registered taxonomy called `course` to emulate theme location.
+* Now, any `term` of any `taxonomy` can be used as the actual `course`.
+* This means that `courses` could be called (for example) `stories` and `workshops` by using custom taxonomies called `stories` and `workshops`.
+
+##  2. <a name='ExtendingNavigationMenuArchitecture'></a>Extending Navigation Menu Architecture for Sections
+
+
+
+
+###  2.1. <a name='SectionsasCollectionsSectionsasBlocks'></a>Sections as Collections & Sections as Blocks
 
 Until now, sections were understood as pieces of the course (section = to cut). *cmi5* calls such entities `blocks` (as in building blocks or components of a whole) and they are understood as a `collection` of `units`, `objectives` and other `sections`. In this sense the relationship between a `section` and a `course` is the same as that between a `block` and a WordPress `post` in 5.x.
 
 ![2 views of Chunking](../../assets/2-Views-of-Chunking.jpg)
 
-###  1.3. <a name='CourseasaSection'></a>Course as a Section
+###  2.2. <a name='CourseasaSection'></a>Course as a Section
 
 In this sense, a `course` is also a `section` (or at least behaves like it) since it is also a `collection` of `units`, `objectives` and other `sections`.
 
@@ -103,7 +120,7 @@ So, what constitutes a course is entirely upto the course creator.
 
 A course could be a 3 year thing divided into `years`, `semesters`, `subjects`, `topics`, etc. Any of these could behave like a course and the levels below it will behave like sections.
 
-###  1.4. <a name='CourseSectionsasTaxonomy'></a>Course & Sections as Taxonomy
+###  2.3. <a name='CourseSectionsasTaxonomy'></a>Course & Sections as Taxonomy
 
 A building block is a building block because it has a limited kind of independent existence, apart from being a part of the whole.
 
@@ -115,13 +132,13 @@ Like `courses`, `sections` also behave like navigation menus in their own right,
 
 The relationship between `terms` in this case is complicated because it can happen across taxonomies. The relationship is derived from the Course Structure.
 
-###  1.5. <a name='QuizzesAssignmentsasSectionsTaxonomyTerms'></a>Quizzes & Assignments as Sections (Taxonomy Terms)
+###  2.4. <a name='QuizzesAssignmentsasSectionsTaxonomyTerms'></a>Quizzes & Assignments as Sections (Taxonomy Terms)
 
 Section behaviour for Quizzes & Assignments means they can be used outside courses. Any kind of learning experience is possible.
 
 Second, they could exist outside a unit.
 
-###  1.6. <a name='ObjectivesUnitsasPostTypes'></a>Objectives & Units as Post Types
+###  2.5. <a name='ObjectivesUnitsasPostTypes'></a>Objectives & Units as Post Types
 
 > Objectives deserve special and detailed attention, elsewhere and later. Limiting this to Units
 
@@ -129,7 +146,7 @@ Units are leaf nodes, non-heirarchical in nature. Units also represent the state
 
 That is why `'unit'`is a custom `post_type`.
 
-####  1.6.1. <a name='UnitasaCollection'></a>Unit as a Collection
+####  2.5.1. <a name='UnitasaCollection'></a>Unit as a Collection
 
 A unit can also behave like a collection of activities represented by `blocks` that make up the unit content.
 
@@ -137,17 +154,17 @@ A unit can also behave like a collection of activities represented by `blocks` t
 
 The collection behaviour of a unit is not a concern of the Course Structure. It is the concern of the Unit and uses WordPress blocks as components of a unit.
 
-###  1.7. <a name='SectionsandCourseHeirarchy'></a>Sections and Course Heirarchy
+###  2.6. <a name='SectionsandCourseHeirarchy'></a>Sections and Course Heirarchy
 
 Unlike builtin WordPress objects, the relationship between Sections and Course is a parent child relationship. Just as different `post_types` can have a parent-child relationship, it should be possible to have `course` terms to have parent-child relationships with `section` term.
 
-###  1.8. <a name='CoursevsSection'></a>Course vs Section
+###  2.7. <a name='CoursevsSection'></a>Course vs Section
 
 Everything else being equivalent, the only difference between a `course` and a `section` is that a `course` is the *root* node of a *tree data structure*,  `section` is a *node* (and `unit` is the leaf).
 
 Any other behaviour should be decoupled (like sales, drip, etc) from `courses` and `sections` and they should be free to behave the way they like.
 
-###  1.9. <a name='ReferencesnotActuals'></a>References, not Actuals
+###  2.8. <a name='ReferencesnotActuals'></a>References, not Actuals
 
 The key thing to take away is that the Course Struture comprising of a single root level `term` of the taxonomy `course`, multiple nested `terms` of the taxonomy `section` and `posts` of the post_type `unit` all contain references to other terms or posts that form the actual content and its organisation.
 
@@ -159,7 +176,7 @@ The key thing to take away is that the Course Struture comprising of a single ro
 
 The only limitation to keep in mind is that only `terms` can become a `course` or `section` and only `posts` can become a `unit`. The opportunity is that *any* `term` of *any* `taxonomy` can become a `course` or a `section` of a course and *any* `post_type` can become a `unit`.
 
-###  1.10. <a name='Reusability'></a>Reusability
+###  2.9. <a name='Reusability'></a>Reusability
 
 Any `section` or `unit` is inherently reusable. The content of a `lesson` for example, is a different post of the post_type `lesson`, stored only as a *reference* in the metadata of the post of the post_type `unit`, the same `lesson` could be referenced in multiple `units`.
 
@@ -169,13 +186,13 @@ If a `lesson` is referenced in more than one `unit`, editing them should accomod
 
 > If such clones are different in content but serve the same *purpose* (learning *goal*), they could share the same *objective* reference.
 
-###  1.11. <a name='ExportImport'></a>Export/ Import
+###  2.10. <a name='ExportImport'></a>Export/ Import
 
 The content could be exported and imported independently of LifterLMS. The structure is a bit tricky because all the associations between posts and terms are on the basis of their IDs generated by the database.
 
 Which is why the export/import format should have the slug instead of the ID. When importing, new objects will be created using the slugs and the newly generated IDs will be used to recreate the course structure.
 
-##  2. <a name='ActualStructure'></a>Actual Structure
+##  3. <a name='ActualStructure'></a>Actual Structure
 
 ```js
 {

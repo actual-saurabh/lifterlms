@@ -693,6 +693,86 @@ class LLMS_Access_Plan extends LLMS_Post_Model {
 	}
 
 	/**
+	 * Determine if a user can avail of a trial
+	 *
+	 * @param    int     $user_id  (optional) WP User ID, if not supplied get_current_user_id() will be used.
+	 * @return   boolean
+	 * @since    [version]
+	 * @version  [version]
+	 */
+	public function is_trial_available_to_user( $user_id = null ){
+
+		// bail if the plan doesn't have a trial at all.
+		if ( ! $this->has_trial() ) {
+			return false;
+		}
+
+		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
+
+		/**
+		 * Checks only past trials when checking trial availability.
+		 *
+		 * Set to false to check all past orders irrespective of whether trials were used
+		 *
+		 * @since    [version]
+		 * @version  [version]
+		 */
+		$check_trials_only = apply_filters( 'llms_is_trial_available_to_user_check_trials_only', true );
+
+		// get past orders
+		$past_orders = $this->get_past_orders( $user_id, $this->get( 'id'), $check_trials_only );
+
+		// if no past orders, user can avail of trial
+		return empty( $past_orders ) ? true: false;
+
+	}
+
+	/**
+	 * Get past orders of user with this Access Plan.
+	 *
+	 * @param    int         $user_id            WP User ID
+	 * @param    int         $plan_id            Access Plan ID
+	 * @param    boolean     $check_trials_only  Whether to only check for orders with trials.
+	 * @return   boolean
+	 * @since    [version]
+	 * @version  [version]
+	 */
+	private function get_past_orders( $user_id = null, $plan_id = null, $check_trials_only = true ){
+
+		// bail with no orders if no $user_id or $plan_id was provided; maybe it's a non-logged in user.
+		if ( empty ( $user_id ) || empty( $plan_id ) ){
+			return false;
+		}
+
+		global $wpdb;
+
+		$sql_select_join = array();
+		$sql_where = array();
+
+		$sql_select = "SELECT ID FROM {$wpdb->prefix}posts AS p ";
+
+		$sql_join[] = "{$wpdb->prefix}postmeta AS pm_user ON pm_user.post_id = p.ID AND pm_user.meta_key = '_llms_user_id'";
+		$sql_join[] = "{$wpdb->prefix}postmeta AS pm_plan ON pm_plan.post_id = p.ID AND pm_plan.meta_key = '_llms_plan_id'";
+
+		$sql_where[] = "p.post_type = 'llms_order'";
+		$sql_where[] = "pm_user.meta_value = %d";
+		$sql_where[] = "pm_plan.meta_value = %d";
+
+		// if we need to check trials only, modify the join and wherer clauses to include that.
+		if( ! empty( $check_trials_only ) ){
+			$sql_join[] = "{$wpdb->prefix}postmeta AS pm_trial ON pm_trial.post_id = p.ID AND pm_trial.meta_key = '_llms_trial_offer'";
+			$sql_where[] = "AND pm_trial.meta_value = 'yes'";
+		}
+
+		// build the complete statement
+		$sql_statement = $sql_where . implode( ' JOIN ', $sql_select_join ) . ' WHERE ' . implode( ' AND ', $sql_where );
+
+		// return results. will be empty if no such orders were found.
+		return $orders = $wpdb->get_results( $wpdb->prepare( $sql_statement, $user_id, $plan_id ) );
+
+	}
+
+	/**
 	 * Determine if the plan is available to a user based on configured availability restrictions
 	 * @param    int     $user_id  (optional) WP User ID, if not supplied get_current_user_id() will be used
 	 * @return   boolean

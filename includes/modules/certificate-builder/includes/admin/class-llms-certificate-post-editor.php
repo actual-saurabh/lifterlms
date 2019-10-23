@@ -246,6 +246,11 @@ class LLMS_Certificate_Editor {
 			$post_id = llms_filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
 		}
 
+		// bail if this isn't a single post.
+		if( empty( $post_id ) ){
+			return;
+		}
+
 		// override for current migration
 		if ( true === llms_filter_input( INPUT_GET, 'llms-certificate-migrate', FILTER_VALIDATE_BOOLEAN ) ) {
 			$this->current_overlay_config = $this->overlay_configs['migrated_to'];

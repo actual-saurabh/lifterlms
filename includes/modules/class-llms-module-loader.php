@@ -95,14 +95,8 @@ class LLMS_Module_Loader {
 		 * The modules are listed as indexed elements in an array:
 		 *
 		 *    $modules = array(
-		 *        'module_name' => array(
-		 *            'name'          => 'module-name',
-		 *            'file_path'     => 'lifterlms/includes/modules/module-name/class-llms-module-name.php',
-		 *            'constant_name' => 'LLMS_MODULE_NAME',
-		 *        ),
-		 *        'module2_name' => array(
-		 *            ...
-		 *        ),
+		 *        'module_name' => 'lifterlms/includes/modules/module-name/llms-module-name.php',
+		 *        'module2_name' => 'lifterlms/includes/modules/module2-name/llms-module2-name.php
 		 *        ...
 		 *    )
 		 *
@@ -113,39 +107,32 @@ class LLMS_Module_Loader {
 		// initialise after-load information.
 		$loaded = array();
 
-		foreach ( $to_load as $module ) {
-
-			// define the constant as true if it hasn't been defined explicitly.
-			if ( ! defined( $module['constant_name'] ) ) {
-				define( $module['constant_name'], true );
-			}
-
-			// bail, if the constant's value is explcitly defined to false.
-			if ( constant( $module['constant_name'] ) === false ) {
-				continue;
-			}
+		foreach ( $to_load as $name=>$path ) {
 
 			// bail, if the main file doesn't exist.
-			if ( ! file_exists( $module['file_path'] ) ) {
+			if ( ! file_exists( $path ) ) {
 				continue;
 			}
 
 			// all fine, include the file.
-			include_once $module['file_path'];
+			include_once $path;
 
 			// add module's info to loaded information.
-			$loaded[ $module['name'] ] = $module;
+			$loaded[ $name ] = $path;
 
 			/**
-			 * Fires after a particular module is loaded.
+			 * Fires after a particular module's main file is loaded.
 			 *
-			 * This only contains basic information about what module was loaded.
+			 * This only contains basic information about what module was attempted to load.
+			 * The actual loading of the module is handled by the main file which may choose to not do so.
+			 *
 			 * If you want specific information related to the modules' functionality,
+			 * or absolutely confirm that the modules was loaded
 			 * look for hooks within the module itself.
 			 *
 			 * @since [version] Introduced.
 			 */
-			do_action( "lifterlms_module_{$module['name']}_loaded", $module );
+			do_action( "lifterlms_module_{$name}_loaded", $path );
 
 		}
 
@@ -176,19 +163,11 @@ class LLMS_Module_Loader {
 
 		// loop through every directory
 		foreach ( $directories as $module ) {
-
 			// the name of the module is the same as the name of the directory. eg "certificate-builder"
 			$module_name = basename( $module );
 
-			$modules[ $module_name ] = array(
-				'name' => $module_name,
-			);
-
-			// the name of the class file is similar. eg "class-llms-certificate-builder.php"
-			$modules[ $module_name ]['file_path'] = "{$module}/class-llms-{$module_name}.php";
-
-			// the constant name also uses similar conventions. eg "LLMS_CERTIFICATE_BUILDER"
-			$modules[ $module_name ]['constant_name'] = 'LLMS_' . strtoupper( str_replace( '-', '_', $module_name ) );
+			// start setting this modules' information
+			$modules[ $module_name ] = "{$module}/llms-{$module_name}.php";
 
 			unset( $module_name );
 

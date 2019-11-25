@@ -1,13 +1,25 @@
 <?php
+/**
+ * Certificate Migration Metabox.
+ *
+ * @package LifterLMS/Modules/Certificate_Builder/
+ *
+ * @since   [version]
+ * @version [version]
+ */
 
+/**
+ * Conditionally loads migration/rollback editor metabox.
+ *
+ * @since [version]
+ */
 class LLMS_Certificate_Migration_Metabox extends LLMS_Admin_Metabox {
 
 	/**
 	 * Configure the metabox settings
 	 *
-	 * @return   void
-	 * @since    3.0.0
-	 * @version  3.0.0
+	 * @return  void
+	 * @since  [version]
 	 */
 	public function configure() {
 
@@ -21,27 +33,44 @@ class LLMS_Certificate_Migration_Metabox extends LLMS_Admin_Metabox {
 
 	}
 
+	/**
+	 * Registers the metabox with LifterLMS Metabox API.
+	 *
+	 * @since [version]
+	 */
 	public function register() {
+
 		global $post;
+
+		// if the certificate has a legacy (is migrated from one).
 		$has_legacy = ! empty (LLMS_Certificate_Migrator::has_legacy( $post->ID ) );
+
+		// if the certificate is a legacy.
 		$is_legacy = LLMS_Certificate_Migrator::is_legacy( $post->ID );
+
+		// if the certificate is a legacy of a migrated modern one.
 		$is_legacy_of_modern = ! empty( LLMS_Certificate_Migrator::is_legacy_of_modern( $post->ID ) );
+
+		// no need to display on freshly created certificates or ones already migrated.
 		if ( ( ! $has_legacy && ! $is_legacy ) || $is_legacy_of_modern ) {
 			return;
 		}
 
+		// otherwise, register the metabox
 		parent::register();
 
 	}
 
 	/**
-	 * Not used because our metabox doesn't use the standard fields api
+	 * Returns fields for the metabox
 	 *
-	 * @since  3.0.0
+	 * @since  [version]
 	 *
 	 * @return array
 	 */
 	public function get_fields() {
+
+		// Return empty because our metabox doesn't use the standard fields api
 		return array();
 	}
 
@@ -49,8 +78,7 @@ class LLMS_Certificate_Migration_Metabox extends LLMS_Admin_Metabox {
 	 * Function to field WP::output() method call
 	 * Passes output instruction to parent
 	 *
-	 * @since 3.0.0
-	 * @since 3.19.0 Unknown.
+	 * @since [version]
 	 */
 	public function output() {
 
@@ -102,18 +130,24 @@ class LLMS_Certificate_Migration_Metabox extends LLMS_Admin_Metabox {
 		}
 
 		if ( llms_filter_input( INPUT_POST, 'llms_certificate_rollback' ) ) {
-			LLMS_Certificate_Migrator::rollback( $post_id );
+			$this->rollback( $post_id );
 		}
 
 	}
 
-	public function migrate(){
+	/**
+	 * Migrates a given legacy certificate.
+	 *
+	 * @param int $post_id Post ID of legacy certificate
+	 *
+	 * @since [version]
+	 */
+	public function migrate( $post_id ){
 
 		$new_certificate = LLMS_Certificate_Migrator::migrate( $post_id );
 
 		// set an empty context, otherwise the `&` will be returned as `&amp;` breaking the redirection.
 		$edit_link = get_edit_post_link( $new_certificate, '' );
-
 
 		$redirect_url = add_query_arg(
 			array(
@@ -128,6 +162,13 @@ class LLMS_Certificate_Migration_Metabox extends LLMS_Admin_Metabox {
 		}
 	}
 
+	/**
+	 * Rollback a given modern certificate to legacy.
+	 *
+	 * @param int $post_id Post ID of legacy certificate
+	 *
+	 * @since [version]
+	 */
 	public function rollback(){
 
 		$legacy_certificate = LLMS_Certificate_Migrator::rollback( $post_id );

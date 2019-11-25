@@ -1,10 +1,10 @@
 <?php
 /**
- * Certificate Builder Module.
+ * Contains main Certificate Builder module class.
  *
  * @package LifterLMS/Modules/Certificate_Builder
  *
- * @since   [version] Introduced
+ * @since   [version]
  * @version [version]
  */
 
@@ -13,14 +13,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Loads the certificate builder module.
  *
- * @since [version] Introduced
+ * @since [version]
  */
 class LLMS_Certificate_Builder {
 
 	/**
 	 * Constructor.
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	public function __construct() {
 		$this->init();
@@ -29,16 +29,17 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Initialises module.
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	public function init() {
 
 		// load all constants.
 		$this->constants();
 
-		// load migrator and extend editor on dashboard.
+		$this->load_migrator();
+
+		// extend editor on dashboard.
 		if ( is_admin() ) {
-			$this->load_migrator();
 			$this->extend_editor();
 		}
 
@@ -53,7 +54,7 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Defines module constants.
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	private function constants() {
 
@@ -63,7 +64,7 @@ class LLMS_Certificate_Builder {
 			 * Sets the query parameter that loads frontend builder.
 			 *
 			 * @var   string
-			 * @since [version] Introduced
+			 * @since [version]
 			 */
 			define( 'LLMS_CERTIFICATE_BUILD_MODE_PARAMETER', 'llms-build-mode' );
 		}
@@ -74,7 +75,7 @@ class LLMS_Certificate_Builder {
 			 * Enable/Disable migration.
 			 *
 			 * @var   bool
-			 * @since [version] Introduced
+			 * @since [version]
 			 */
 			define( 'LLMS_CERTIFICATE_BUILDER_ENABLE_MIGRATION', true );
 		}
@@ -84,8 +85,8 @@ class LLMS_Certificate_Builder {
 			/**
 			 * Enable/Disable toolbar button.
 			 *
-			 * @var   string
-			 * @since [version] Introduced
+			 * @var   bool
+			 * @since [version]
 			 */
 			define( 'LLMS_CERTIFICATE_BUILDER_ENABLE_TOOLBAR_BUTTON', true );
 		}
@@ -94,7 +95,7 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Adds toolbar button.
 	 *
-	 * @since [version] Introduced.
+	 * @since [version]
 	 */
 	private function add_toolbar_button() {
 
@@ -105,6 +106,8 @@ class LLMS_Certificate_Builder {
 
 		/**
 		 * Class that loads toolbar button.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/admin/class-llms-certificate-builder-toolbar.php';
 	}
@@ -112,7 +115,7 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Load migration functionality.
 	 *
-	 * @since [version] Introduced.
+	 * @since [version]
 	 */
 	public function load_migrator() {
 
@@ -123,16 +126,27 @@ class LLMS_Certificate_Builder {
 
 		/**
 		 * Class that loads migration functionality.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/migration/class-llms-certificate-migrator.php';
 
+		// no need to load metabox and bulk migrator on frontend; bail.
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		/**
 		 * Class that loads bulk migration functionality.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/migration/class-llms-certificate-bulk-migrator.php';
 
 		/**
 		 * Class that loads the migration metabox on certificates.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/admin/class-llms-certificate-migration-metabox.php';
 	}
@@ -140,17 +154,21 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Extends post editor.
 	 *
-	 * @since [version] Introduced.
+	 * @since [version]
 	 */
 	public function extend_editor() {
 
 		/**
 		 * Class that extends posts table for certificates.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/admin/class-llms-certificate-post-table.php';
 
 		/**
 		 * Class that extends post editor for certificates.
+		 *
+		 * @since [version]
 		 */
 		include_once 'includes/admin/class-llms-certificate-post-editor.php';
 	}
@@ -158,7 +176,7 @@ class LLMS_Certificate_Builder {
 	/**
 	 * Loads Builder UI.
 	 *
-	 * @since [version] Introduced.
+	 * @since [version]
 	 */
 	public function load_builder() {
 
@@ -172,11 +190,15 @@ class LLMS_Certificate_Builder {
 
 			/**
 			 * Class that loads webpage fonts on the builder.
+			 *
+			 * @since [version]
 			 */
 			include_once 'includes/builder/class-llms-webpage-fonts.php';
 
 			/**
 			 * Class that loads the actual builder screen.
+			 *
+			 * @since [version]
 			 */
 			include_once 'includes/builder/class-llms-certificate-builder-screen.php';
 		}

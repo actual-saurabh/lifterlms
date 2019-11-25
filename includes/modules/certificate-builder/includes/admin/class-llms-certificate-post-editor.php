@@ -76,7 +76,7 @@ class LLMS_Certificate_Editor {
 	public function setup_post_id() {
 		$this->post_id = llms_filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
 
-		if ( empty( $this->post_id ) ){
+		if ( empty( $this->post_id ) ) {
 			$this->post_id = llms_filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
 		}
 	}
@@ -399,8 +399,8 @@ class LLMS_Certificate_Editor {
 	/**
 	 * Generates default content for new certificates
 	 *
-	 * @param string $content Default new post content
-	 * @param WP_Post $post Post Object
+	 * @param string  $content Default new post content
+	 * @param WP_Post $post    Post Object
 	 *
 	 * @return string
 	 * @since  [version]

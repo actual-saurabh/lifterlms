@@ -4,7 +4,7 @@
  *
  * @package LifterLMS/Modules/Certificate_Builder
  *
- * @since   [version] Introduced
+ * @since   [version]
  * @version [version]
  */
 
@@ -13,14 +13,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Adds Build button to WP Toolbar.
  *
- * @since [version] Introduced
+ * @since [version]
  */
 class LLMS_Certificate_Builder_Toolbar {
 
 	/**
 	 * Constructor
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	public function __construct() {
 		$this->hook();
@@ -29,7 +29,7 @@ class LLMS_Certificate_Builder_Toolbar {
 	/**
 	 * Hooks into tollbar.
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	private function hook() {
 		add_action( 'admin_bar_menu', array( $this, 'builder_link' ), 90 );
@@ -40,7 +40,7 @@ class LLMS_Certificate_Builder_Toolbar {
 	 *
 	 * @param $admin_bar WP_Admin_Bar
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	public function builder_link( $admin_bar ) {
 
@@ -66,7 +66,9 @@ class LLMS_Certificate_Builder_Toolbar {
 		}
 
 		// Only load on certificate screens.
-		if ( 'llms_certificate' === $post->post_type && current_user_can( 'edit_post', $post->ID ) ) {
+		if ( 'llms_certificate' === $post->post_type && current_user_can( 'edit_post', $post->ID ) && ! LLMS_Certificate_Migrator::is_legacy( $post->ID ) ) {
+
+			// add a LLMS_IS_BUILD_MODE boolean to not load this.
 
 			// Fetch the build URL.
 			$build_link = llms_certificate_build_url( $post );

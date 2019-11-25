@@ -94,7 +94,7 @@ class LLMS_Module_Loader {
 		// initialise after-load information.
 		$loaded = array();
 
-		foreach ( $to_load as $name=>$path ) {
+		foreach ( $to_load as $name => $path ) {
 
 			// bail, if the main file doesn't exist.
 			if ( ! file_exists( $path ) ) {

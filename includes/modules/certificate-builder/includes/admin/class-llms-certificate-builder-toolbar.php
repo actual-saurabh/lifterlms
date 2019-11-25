@@ -62,7 +62,6 @@ class LLMS_Certificate_Builder_Toolbar {
 			 ) ) {
 				return;
 			}
-
 		}
 
 		// Only load on certificate screens.

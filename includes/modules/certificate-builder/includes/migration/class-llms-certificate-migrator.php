@@ -1,10 +1,10 @@
 <?php
 /**
- * Certificate Migrator
+ * Certificate Migrator.
  *
  * @package LifterLMS/Modules/Certificate_Builder
  *
- * @since   [version] Introduced
+ * @since   [version]
  * @version [version]
  */
 
@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Handles Certificate Migration and Rollbacks.
  *
- * @since [version] Introduced
+ * @since [version]
  */
 class LLMS_Certificate_Migrator {
 
@@ -21,7 +21,7 @@ class LLMS_Certificate_Migrator {
 	 * Migrates a legacy certificate.
 	 *
 	 * @param  int          $certificate_id Certificate post ID
-	 * @since  [version]    Introduced
+	 * @since  [version]
 	 *
 	 * @return WP_Error|int Error on failure, post ID of migrated certificate on success.
 	 */
@@ -47,6 +47,8 @@ class LLMS_Certificate_Migrator {
 
 		// unset GUID for fresh generation
 		unset( $certificate['guid'] );
+
+		$certificate['post_content'] = self::content( $certificate_id );
 
 		// insert new post with the same data as the current post.
 		$new_certificate_id = wp_insert_post( $certificate );
@@ -75,7 +77,7 @@ class LLMS_Certificate_Migrator {
 	 * Rolls back a migrated certificate to legacy.
 	 *
 	 * @param  int       $certificate_id Certificate post ID
-	 * @since  [version] Introduced
+	 * @since  [version]
 	 *
 	 * @return WP_Error|int
 	 */
@@ -121,14 +123,14 @@ class LLMS_Certificate_Migrator {
 	 * (The other reliable difference is the markup of the content)
 	 *
 	 * @param  int       $certificate_id Certificate post ID
-	 * @since  [version] Introduced
+	 * @since  [version]
 	 * @return bool
 	 */
 	public static function is_legacy( $certificate_id ) {
 
 		global $wpdb;
 
-		$query_sql = "SELECT * FROM $wpdb->postmeta WHERE post_id=%d AND ( meta_key = %1s OR meta_key = %2s )";
+		$query_sql = "SELECT * FROM $wpdb->postmeta WHERE post_id=%d AND ( meta_key='%1s' OR meta_key='%2s' )";
 
 		$values = array(
 			$certificate_id,
@@ -152,7 +154,7 @@ class LLMS_Certificate_Migrator {
 	 * Checks if a certificate is a legacied version of a migrated one.
 	 *
 	 * @param  int       $certificate_id Certificate post ID
-	 * @since  [version] Introduced
+	 * @since  [version]
 	 * @return int
 	 */
 	public static function is_legacy_of_modern( $certificate_id ) {
@@ -182,7 +184,7 @@ class LLMS_Certificate_Migrator {
 	 *
 	 * @param int       $from_certificate_id Certificate ID to swap from
 	 * @param int       $to_certificate_id   Certificate ID to swap to
-	 * @since [version] Introduced
+	 * @since [version]
 	 *
 	 * @return array|bool
 	 */
@@ -222,7 +224,7 @@ class LLMS_Certificate_Migrator {
 	 * Checks and returns legacy version of certificate.
 	 *
 	 * @param int           $certificate_id Certificate ID.
-	 * @since [version]     Introduced
+	 * @since [version]
 	 *
 	 * @return WP_Post|bool Legacy certificate's post data or 'false' if no legacy found.
 	 */
@@ -243,11 +245,42 @@ class LLMS_Certificate_Migrator {
 	}
 
 	/**
+	 * Retrieves markup of legacy certificate template.
+	 *
+	 * @param int       $from_certificate_id Post ID of legacy certificate
+	 * @since [version]
+	 *
+	 * @return string
+	 */
+	private static function content( $from_certificate_id ) {
+
+		$title = llms_get_certificate_title( $from_certificate_id );
+		$image = llms_get_certificate_image( $from_certificate_id );
+		$content = llms_get_certificate_content( $from_certificate_id );
+
+		ob_start();
+		?>
+
+			<div class="llms-certificate-container llms-certificate-legacy" style="width:<?php echo $image['width']; ?>px; height:<?php echo $image['height']; ?>px;">
+				<img src="<?php echo $image['src']; ?>" style="margin-bottom:-<?php echo $image['height']; ?>px;" alt="Cetrificate Background" class="certificate-background">
+				<div id="certificate-<?php the_ID(); ?>" <?php post_class(); ?>>
+
+					<div class="llms-summary">
+						<h1><?php echo $title; ?></h1>
+						<?php echo $content; ?>
+					</div>
+				</div>
+			</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
 	 * Duplicates all metadata of a post to another
 	 *
 	 * @param int       $from_certificate_id Certificate ID to copy meta from
 	 * @param int       $to_certificate_id Certificate ID to copy meta to
-	 * @since [version] Introduced
+	 * @since [version]
 	 *
 	 * @return int|bool
 	 */
@@ -258,7 +291,7 @@ class LLMS_Certificate_Migrator {
 		// get all the current metadata rows.
 		$post_metas = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d',
+				"SELECT meta_key, meta_value FROM $wpdb->postmeta WHERE post_id = %d",
 				$from_certificate_id
 			)
 		);
@@ -271,13 +304,13 @@ class LLMS_Certificate_Migrator {
 		// delete all existing metadata added through wp_insert_post().
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM $wpdb->postmeta WHERE post_id = %d',
+				"DELETE FROM $wpdb->postmeta WHERE post_id = %d",
 				$to_certificate_id
 			)
 		);
 
 		// start constructing insert query statement.
-		$sql_query = $wpdb->prepare( 'INSERT INTO $wpdb->postmeta ( post_id, meta_key, meta_value ) ' );
+		$sql_query = "INSERT INTO $wpdb->postmeta ( post_id, meta_key, meta_value ) ";
 
 		// construct statement fragments for duplicating and inserting each metadata.
 		foreach ( $post_metas as $meta ) {
@@ -295,7 +328,7 @@ class LLMS_Certificate_Migrator {
 
 			// setup copying to new post's ID
 			$sql_query_sel[] = $wpdb->prepare(
-				'SELECT %d, %1s, %2s;',
+				"SELECT %d, '%1s', '%2s'",
 				array(
 					$to_certificate_id,
 					$meta_key,
@@ -315,7 +348,7 @@ class LLMS_Certificate_Migrator {
 	 * Deletes legacy version
 	 *
 	 * @param int       $certificate_id Certificate ID.
-	 * @since [version] Introduced
+	 * @since [version]
 	 *
 	 * @return WP_Post|false|null
 	 */

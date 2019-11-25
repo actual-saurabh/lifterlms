@@ -1,6 +1,6 @@
 <?php
 /**
- * Loads Certificate Builder Module
+ * Loads Certificate Builder Module.
  *
  * @package LifterLMS/Modules/Certificate_Builder
  *
@@ -31,7 +31,11 @@ if ( ! defined( 'LLMS_CERTIFICATE_BUILDER' ) ) {
 	define( 'LLMS_CERTIFICATE_BUILDER', true );
 }
 
-// at this point, the certificate builder hasn't been explicitly toggled off, we can start loading
+// this point onwards, LLMS_CERTIFICATE_BUILDER will have been set appropriately.
+
+if ( ! LLMS_CERTIFICATE_BUILDER ) {
+	return;
+}
 
 /**
  * Main Certificate Builder class.

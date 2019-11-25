@@ -1,10 +1,10 @@
-'<?php
+<?php
 /**
  * Post Table/Editor extensions
  *
  * @package LifterLMS/Modules/Certificate_Builder
  *
- * @since [version]
+ * @since   [version]
  * @version [version]
  */
 
@@ -13,30 +13,35 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Handles post editor & post table modifications.
  *
- * @since    [version]
+ * @since [version]
  */
 class LLMS_Certificate_Editor {
 
 	/**
 	 * All available overlay configurations.
 	 *
-	 * @var array $overlay_configs
+	 * @var array
 	 */
 	private $overlay_configs = array();
 
 	/**
 	 * Current overlay configuration.
 	 *
-	 * @var array $current_overlay_configs
+	 * @var array
 	 */
 	private $current_overlay_config = array();
 
 	/**
-	 * Constructor
+	 * Current certificate's post ID
 	 *
-	 * Hooks editor related modifications to Certificate post type.
+	 * @var int
+	 */
+	public $post_id;
+
+	/**
+	 * Constructor.
 	 *
-	 * @since    [version]
+	 * @since [version]
 	 */
 	public function __construct() {
 
@@ -45,11 +50,90 @@ class LLMS_Certificate_Editor {
 	}
 
 	/**
-	 * Set
+	 * Hooks editor related modifications to Certificate post type.
+	 *
+	 * @since [version]
+	 */
+	protected function hook() {
+
+		// set up post ID for use before WP sets up post ID
+		add_action( 'admin_int', array( $this, 'setup_post_id' ), 0 );
+
+		// hook redirection for legacy certificates.
+		add_action( 'admin_init', array( $this, 'maybe_redirect_legacy' ) );
+
+		// hook editor overlay.
+		add_action( 'current_screen', array( $this, 'maybe_overlay_editor' ) );
+
+		// set default post content for new certificates.
+		add_filter( 'default_content', array( $this, 'default_content' ), 10, 2 );
+
+	}
+
+	/**
+	 * Sets up post ID.
+	 */
+	public function setup_post_id() {
+		$this->post_id = llms_filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
+
+		if ( empty( $this->post_id ) ){
+			$this->post_id = llms_filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
+		}
+	}
+
+	/**
+	 * Conditionally redirects migrated certificates.
+	 *
+	 * @since [version]
+	 */
+	public function maybe_redirect_legacy() {
+
+		// bail if not single post action
+		if ( empty( $this->post_id ) ) {
+			return;
+		}
+
+		// don't interfere with deletion
+		if ( 'edit' !== llms_filter_input( INPUT_GET, 'action' ) ) {
+			return;
+		}
+
+		// override for already migrated legacy certificates
+		$modern = LLMS_Certificate_Migrator::is_legacy_of_modern( $this->post_id );
+
+		if ( false === $modern ) {
+			return;
+		}
+
+		// don't interfere with deletion
+		if ( 'trash' === llms_filter_input( INPUT_POST, 'get', FILTER_VALIDATE_STRING ) ) {
+			return;
+		}
+
+		$modern_edit_url = get_edit_post_link( $modern, '' );
+
+		$redirect_url = add_query_arg(
+			array(
+				'llms-certificate-legacy-redirect' => true, // special query parameter to trigger content migration.
+			),
+			$modern_edit_url
+		);
+
+		if ( wp_redirect( $redirect_url ) ) {
+			exit();
+		}
+	}
+
+
+
+	/**
+	 * Sets up overlay editor configuration.
+	 *
+	 * @since [version]
 	 */
 	protected function configure() {
 
-		$builder_url = llms_certificate_build_url();
+		$builder_url = llms_certificate_build_url( $this->post_id );
 
 		$overlay_config = array(
 			'add' => array(
@@ -107,7 +191,7 @@ class LLMS_Certificate_Editor {
 				),
 			),
 			'migrated_to' => array(
-				'title' => __( "Congratulations! Your older certificate has been migrated to the new drag and drop builder. We haven't deleted the old certificate yet, and you can choose to rollback if you want.", 'lifterlms' ),
+				'title' => __( "Congratulations! Your older certificate is almost been migrated to the new drag and drop builder. We haven't deleted the old certificate yet, and you can choose to rollback if you want.", 'lifterlms' ),
 				'buttons' => array(
 					array(
 						'class' => array( 'llms-certificate-switch', 'button-secondary' ),
@@ -115,7 +199,7 @@ class LLMS_Certificate_Editor {
 					),
 					array(
 						'class' => array( 'llms-certificate-builder-migrated', 'button-primary' ),
-						'text' => __( 'Launch Drag & Drop Builder', 'lifterlms' ),
+						'text' => __( 'Launch Builder to Complete Migration', 'lifterlms' ),
 					),
 				),
 			),
@@ -124,76 +208,16 @@ class LLMS_Certificate_Editor {
 		/**
 		 * Filters all available overlay configurations
 		 *
-		 * @since    [version]
+		 * @since [version]
 		 */
 		$this->overlay_configs = apply_filters( 'llms_certificate_editor_overlay_configurations', $overlay_config );
 
 	}
 
-	protected function hook() {
-
-		// hook redirection for legacy certificates.
-		add_action( 'admin_init', array( $this, 'redirect_legacy' ) );
-
-		// hook editor overlay.
-		add_action( 'current_screen', array( $this, 'maybe_overlay_editor' ) );
-
-		// set default post content for new certificates.
-		add_filter( 'default_content', array( $this, 'default_content' ), 10, 2 );
-
-	}
-
-	/**
-	 * limit this to certificate post types only
-	 */
-	public function redirect_legacy() {
-
-		$post_id = llms_filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-
-		if ( empty( $post_id ) ){
-			$post_id = llms_filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
-		}
-
-		// bail if not single post action
-		if ( empty( $post_id ) ) {
-			return;
-		}
-
-		// don't interfere with deletion
-		if ( 'edit' !== llms_filter_input( INPUT_GET, 'action' ) ) {
-			return;
-		}
-
-		// override for already migrated legacy certificates
-		$modern = LLMS_Certificate_Migrator::is_legacy_of_modern( $post_id );
-
-		if ( false === $modern ) {
-			return;
-		}
-
-		// don't interfere with deletion
-		if ( 'trash' === llms_filter_input( INPUT_POST, 'get', FILTER_VALIDATE_STRING ) ) {
-			return;
-		}
-
-		$modern_edit_url = get_edit_post_link( $modern, '' );
-
-		$redirect_url = add_query_arg(
-			array(
-				'llms-certificate-legacy-redirect' => true, // special query parameter to trigger content migration.
-			),
-			$modern_edit_url
-		);
-
-		if ( wp_redirect( $redirect_url ) ) {
-			exit();
-		}
-	}
-
 	/**
 	 * Conditionally overlays WP Editor.
 	 *
-	 * @since    [version]
+	 * @since [version]
 	 */
 	public function maybe_overlay_editor() {
 
@@ -224,9 +248,9 @@ class LLMS_Certificate_Editor {
 	}
 
 	/**
-	 * Sets up Overlay configuration
+	 * Sets up current overlay configuration.
 	 *
-	 * @since [version] Introduced
+	 * @since [version]
 	 */
 	private function set_config( $action = '' ) {
 
@@ -240,17 +264,6 @@ class LLMS_Certificate_Editor {
 			$this->current_overlay_config = $this->overlay_configs['add'];
 		}
 
-		$post_id = llms_filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-
-		if ( empty( $post_id ) ) {
-			$post_id = llms_filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
-		}
-
-		// bail if this isn't a single post.
-		if( empty( $post_id ) ){
-			return;
-		}
-
 		// override for current migration
 		if ( true === llms_filter_input( INPUT_GET, 'llms-certificate-migrate', FILTER_VALIDATE_BOOLEAN ) ) {
 			$this->current_overlay_config = $this->overlay_configs['migrated_to'];
@@ -262,7 +275,7 @@ class LLMS_Certificate_Editor {
 		}
 
 		// override for legacy cerificates
-		if ( LLMS_Certificate_Migrator::is_legacy( $post_id ) ) {
+		if ( LLMS_Certificate_Migrator::is_legacy( $this->post_id ) ) {
 			$this->current_overlay_config = $this->overlay_configs['legacy'];
 		}
 
